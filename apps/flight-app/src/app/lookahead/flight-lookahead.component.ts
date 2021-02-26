@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, combineLatest, from, interval, Observable, of, Subject } from 'rxjs';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from "@angular/forms";
-import { catchError, concatMap, debounceTime, delay, distinctUntilChanged, exhaustMap, filter, map, mergeMap, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, concatMap, debounceTime, delay, distinctUntilChanged, exhaustMap, filter, first, map, mergeMap, shareReplay, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { Flight } from '@flight-workspace/flight-lib';
 
 function log(o) {
@@ -93,6 +93,8 @@ export class FlightLookaheadComponent
                     //tap(value => this.online = value)
         );
 
+        // {{ online$ | async }}
+
         this.flights$ = combineLatest([input$, this.online$]).pipe(
             betterLog('b4 filter'),
             filter( ([_, online]) => online ),
@@ -118,6 +120,12 @@ export class FlightLookaheadComponent
     }
 
     load(from: string)  {
+
+        // const bs = this.loadingSubject.value;
+        // this.loadingSubject.pipe(first()).subscribe(value => {
+        // });
+
+
         const url = "http://www.angular.at/api/flight";
 
         const params = new HttpParams()
