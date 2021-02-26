@@ -1,7 +1,7 @@
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 
-import {Observable, of, ConnectableObservable} from 'rxjs';
+import {Observable, of, ConnectableObservable, BehaviorSubject} from 'rxjs';
 import {Flight} from '../models/flight';
 import { shareReplay, publish } from 'rxjs/operators';
 
@@ -11,7 +11,14 @@ import { shareReplay, publish } from 'rxjs/operators';
 })
 export class FlightService {
 
+  // Old
   flights: Flight[] = [];
+
+  // New
+  private flightsSubject = new BehaviorSubject<Flight[]>([])
+  readonly flights$ = this.flightsSubject.asObservable();
+
+
   baseUrl = `http://www.angular.at/api`;
   // baseUrl = `http://localhost:3000`;
   
@@ -21,20 +28,15 @@ export class FlightService {
   }
 
   load(from: string, to: string, urgent: boolean): void {
-    const o = this.find(from, to, urgent).pipe(
-      shareReplay({ bufferSize: 1, refCount: false })
-    );
-    
-    // o.subscribe();
-    // o.subscribe();
-    // o.subscribe();
+    const o = this.find(from, to, urgent)
+      .subscribe(
+        flights => {
+          this.flights = flights;
 
-      // .subscribe(
-      //   flights => {
-      //     this.flights = flights;
-      //   },
-      //   err => console.error('Error loading flights', err)
-      // );
+          this.flightsSubject.next(flights);
+        },
+        err => console.error('Error loading flights', err)
+      );
   }
 
   find(from: string, to: string, urgent: boolean = false): Observable<Flight[]> {
@@ -83,8 +85,16 @@ export class FlightService {
     const oldDate = new Date(oldFlight.date);
 
     // Mutable
-    oldDate.setTime(oldDate.getTime() + 15 * ONE_MINUTE);
-    oldFlight.date = oldDate.toISOString();
+    // oldDate.setTime(oldDate.getTime() + 15 * ONE_MINUTE);
+    // oldFlight.date = oldDate.toISOString();
+    const newDate = new Date(oldDate.getTime() + 15 * ONE_MINUTE);
+    const newFlight = {...oldFlight, date: newDate.toISOString()};
+    const newFlights = [newFlight, ...oldFlights.slice(1)];
+
+    this.flightsSubject.next(newFlights);
+    this.flights = newFlights;
+
   }
 
 }
+

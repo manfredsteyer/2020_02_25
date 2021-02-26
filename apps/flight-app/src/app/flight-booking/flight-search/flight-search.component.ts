@@ -12,9 +12,12 @@ export class FlightSearchComponent implements OnInit {
   to = 'Graz'; // in Austria
   urgent = false;
 
+  // *ngFor="let f of flights"
   get flights() {
     return this.flightService.flights;
   }
+
+  flights$ = this.flightService.flights$;
 
   // "shopping basket" with selected flights
   basket: object = {

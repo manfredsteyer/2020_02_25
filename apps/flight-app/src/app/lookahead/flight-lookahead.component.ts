@@ -128,11 +128,11 @@ export class FlightLookaheadComponent
 
         return this.http.get<Flight[]>(url, {params, headers}).pipe(
             // delay(7000)
-                catchError(err => {
-                    console.debug('Err', err);
-                    return of([]);
-                    // return throwError(err)
-                }),             
+            catchError(err => {
+                console.debug('Err', err);
+                return of([]);
+                // return throwError(err)
+            }),             
         );
 
     };
