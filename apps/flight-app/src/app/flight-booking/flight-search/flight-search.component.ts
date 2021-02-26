@@ -1,8 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {FakeFlightService, FlightService} from '@flight-workspace/flight-lib';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { flightsLoaded } from '../+state/flight-booking.actions';
+import { flightsLoaded, loadFlights } from '../+state/flight-booking.actions';
 import { FlightBookingAppStateSlice, flightBookingFeatureKey } from '../+state/flight-booking.reducer';
+import { selectFlights, selectFlihgts2 } from '../+state/flight-booking.selectors';
 
 @Component({
   selector: 'flight-search',
@@ -22,7 +24,7 @@ export class FlightSearchComponent implements OnInit {
 
   // flights$ = this.flightService.flights$;
 
-  flights$ = this.store.select(appState => appState[flightBookingFeatureKey].flights);
+  flights$ = this.store.select(selectFlihgts2);
   // flights$ = this.store.select(appState => appState.flightBooking.flights);
   // flights$ = this.store.select(appState => appState['flightBooking'].flights);
 
@@ -33,23 +35,24 @@ export class FlightSearchComponent implements OnInit {
   };
 
   constructor(
+    private actions$: Actions,
     private store: Store<FlightBookingAppStateSlice>,
     private flightService: FlightService) {
   }
 
   ngOnInit() {
+
+    this.actions$.pipe(ofType(/*LoadFlightsError*/)).subscribe(_ => {
+
+    });
+
   }
 
   search(): void {
     if (!this.from || !this.to) return;
 
-    this.flightService
-      .find(this.from, this.to, this.urgent)
-      .subscribe(
-        flights => {
-          this.store.dispatch(flightsLoaded({flights}));
-        }
-      )
+    this.store.dispatch(loadFlights({from: this.from, to: this.to, urgent: this.urgent}));
+
   }
 
   delay(): void {

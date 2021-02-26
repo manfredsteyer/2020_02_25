@@ -20,6 +20,7 @@ import { StoreModule } from '@ngrx/store';
 import { reducers, metaReducers } from './+state';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
+import { EffectsModule } from "@ngrx/effects";
 
 @NgModule({
   imports: [
@@ -35,6 +36,7 @@ import { environment } from '../environments/environment';
     RouterModule.forRoot(APP_ROUTES, { relativeLinkResolution: 'legacy' }),
     
     StoreModule.forRoot(reducers, { metaReducers }),
+    EffectsModule.forRoot(),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
   ],
   declarations: [

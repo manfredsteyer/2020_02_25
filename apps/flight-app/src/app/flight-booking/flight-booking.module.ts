@@ -22,7 +22,7 @@ import { FlightBookingEffects } from './+state/flight-booking.effects';
     RouterModule.forChild(FLIGHT_BOOKING_ROUTES),
     
     StoreModule.forFeature(fromFlightBooking.flightBookingFeatureKey, fromFlightBooking.reducer),
-    // EffectsModule.forFeature([FlightBookingEffects])
+    EffectsModule.forFeature([FlightBookingEffects])
   ],
   declarations: [
     FlightSearchComponent,

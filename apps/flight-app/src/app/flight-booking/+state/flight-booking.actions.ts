@@ -6,6 +6,12 @@ export const flightsLoaded = createAction(
   props<{flights: Flight[]}>()
 );
 
+export const loadFlights = createAction(
+  '[FlightBooking] loadFlights',
+  props<{from: string, to: string, urgent: boolean}>()
+);
+
+
 
 
 
